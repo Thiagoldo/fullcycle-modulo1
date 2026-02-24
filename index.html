@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Design Pattern: Abstract Factory</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css" id="theme">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/monokai.min.css">
+
+    <style>
+        /* Estilos personalizados se precisar */
+        .reveal .slides section p {
+            margin-bottom: 20px;
+        }
+        .reveal table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        .reveal th, .reveal td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: left;
+        }
+        .reveal th {
+            background-color: #333;
+            color: white;
+        }
+        .reveal pre code {
+            max-height: 500px; /* Limita a altura do bloco de código */
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <h1>Design Pattern: Abstract Factory</h1>
+                <h3>Criando famílias de objetos com elegância (e cautela)</h3>
+                <p>O que é? Um Padrão Criacional.</p>
+                <p>Objetivo: Independência entre criação e consumo de objetos.</p>
+                <p><small>Sua apresentação de TI</small></p>
+            </section>
+
+            <section>
+                <h2>Abstract Factory vs. Factory Method</h2>
+                <p>Ambos são padrões criacionais, mas com propósitos e mecânicas diferentes:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Factory Method</th>
+                            <th>Abstract Factory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Foco</strong></td>
+                            <td>Criação de <strong>um único produto</strong>.</td>
+                            <td>Criação de <strong>famílias de produtos</strong> relacionados.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mecanismo</strong></td>
+                            <td><strong>Herança</strong> (subclasses decidem qual objeto instanciar).</td>
+                            <td><strong>Composição / Delegação</strong> (recebe uma fábrica que contém a lógica de criação).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Complexidade</strong></td>
+                            <td>Geralmente menor.</td>
+                            <td>Maior (mais interfaces e classes envolvidas).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section>
+                <h2>Exemplo Prático em PHP</h2>
+                <p>Vamos ver como o Abstract Factory organiza a criação de componentes:</p>
+                <p>A aplicação cliente não sabe se cria um UI para Windows ou Linux.</p>
+                <p>Ela apenas usa a fábrica injetada para garantir consistência!</p>
+                
+                <pre><code class="language-php">
+// Exemplo Simplificado: Interface da Fábrica Abstrata
+interface UIFactory {
+    public function createButton(): Button;
+    public function createCheckbox(): Checkbox;
+}
+
+// Exemplo Simplificado: Fábrica Concreta para Windows
+class WindowsUIFactory implements UIFactory {
+    public function createButton(): Button {
+        return new WindowsButton();
+    }
+    public function createCheckbox(): Checkbox {
+        return new WindowsCheckbox();
+    }
+}
+
+// Cliente usando a fábrica (injetada)
+function renderUI(UIFactory $factory) {
+    $button = $factory->createButton();
+    $checkbox = $factory->createCheckbox();
+    // ... usa os botões e checkboxes
+    echo $button->render() . "\n";
+    echo $checkbox->render() . "\n";
+}
+
+// Uso
+// $factory = new WindowsUIFactory(); // Ou new LinuxUIFactory();
+// renderUI($factory);
+                </code></pre>
+                <p><small>Isso garante que todos os componentes são da mesma "família" (Windows ou Linux).</small></p>
+            </section>
+
+            <section>
+                <h2>Vantagens e Desvantagens</h2>
+                <div style="display: flex; justify-content: space-around; text-align: left;">
+                    <div style="width: 45%;">
+                        <h3>👍 Vantagens:</h3>
+                        <ul>
+                            <li><strong>Desacoplamento:</strong> Cliente não depende de classes concretas.</li>
+                            <li><strong>Consistência:</strong> Garante que produtos de uma família são compatíveis.</li>
+                            <li><strong>Flexibilidade:</strong> Facilita a troca de famílias de produtos (ex: mudar de Windows para Linux UI).</li>
+                        </ul>
+                    </div>
+                    <div style="width: 45%;">
+                        <h3>👎 Desvantagens:</h3>
+                        <ul>
+                            <li><strong>Aumento da Complexidade:</strong> Mais interfaces e classes em projetos pequenos.</li>
+                            <li>**Overengineering:** Pode ser "exagerado" para necessidades simples.</li>
+                            <li><strong>Dificuldade em Adicionar Novos Produtos:</strong> Requer modificação em todas as interfaces e fábricas existentes.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            center: true,
+            hash: true,
+
+            plugins: [ RevealHighlight ]
+        });
+    </script>
+</body>
+</html>
