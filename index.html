@@ -12,40 +12,38 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/monokai.min.css">
 
     <style>
-        .reveal .slides section p {
-            margin-bottom: 20px;
-        }
-        .reveal table {
-            width: 80%;
-            margin: 0 auto;
-            border-collapse: collapse;
-        }
-        .reveal th, .reveal td {
-            border: 1px solid #666;
-            padding: 8px;
-            text-align: left;
-        }
-        .reveal th {
-            background-color: #333;
-            color: white;
-        }
-        /* Permite scroll em slides que excedem a altura da tela */
+        .reveal .slides section p { margin-bottom: 20px; }
+        .reveal table { width: 90%; margin: 0 auto; border-collapse: collapse; font-size: 0.7em; }
+        .reveal th, .reveal td { border: 1px solid #666; padding: 12px; text-align: left; }
+        .reveal th { background-color: #333; color: #42afff; }
+        
+        /* Ajuste de Scroll e Container */
         .reveal .slides section {
-            max-height: 90%; /* Ajuste para não colar na borda */
+            max-height: 95%; 
             overflow-y: auto !important;
-            scrollbar-width: thin;
         }
-        .reveal .slides section::-webkit-scrollbar {
-            width: 6px;
-        }
-        .reveal .slides section::-webkit-scrollbar-thumb {
-            background: #666;
-            border-radius: 10px;
-        }
+        
         .reveal pre code {
-            font-size: 0.55em;
+            font-size: 0.52em;
             line-height: 1.2em;
-            max-height: 400px;
+            max-height: 450px;
+        }
+
+        .highlight-box {
+            background: #222;
+            padding: 20px;
+            border-left: 5px solid #42afff;
+            text-align: left;
+            margin-top: 20px;
+        }
+        
+        .tag {
+            background: #42afff;
+            color: black;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8em;
         }
     </style>
 </head>
@@ -54,15 +52,14 @@
         <div class="slides">
 
             <section>
-                <h1 class="fragment fade-up">Design Pattern: Abstract Factory</h1>
-                <h3 class="fragment">Criando famílias de objetos com elegância</h3>
-                <p class="fragment">O que é? Um Padrão Criacional.</p>
-                <p class="fragment">Objetivo: Independência entre criação e consumo.</p>
+                <h1 class="fragment fade-up">Abstract Factory</h1>
+                <h3 class="fragment" style="color: #42afff;">Design Patterns Criacionais</h3>
+                <p class="fragment">O que é? Uma interface para criar famílias de objetos relacionados.</p>
+                <p class="fragment"><small>Foco: Desacoplamento e Consistência.</small></p>
             </section>
 
             <section>
                 <h2>Abstract Factory vs. Factory Method</h2>
-                <p class="fragment">Diferenças fundamentais:</p>
                 <table>
                     <thead>
                         <tr>
@@ -73,70 +70,82 @@
                     </thead>
                     <tbody>
                         <tr class="fragment">
-                            <td><strong>Foco</strong></td>
-                            <td>Um único produto</td>
-                            <td>Família de produtos</td>
+                            <td><strong>Complexidade</strong></td>
+                            <td>Cria 1 produto por vez.</td>
+                            <td>Cria famílias de produtos.</td>
                         </tr>
                         <tr class="fragment">
                             <td><strong>Mecanismo</strong></td>
-                            <td>Herança</td>
-                            <td>Composição / Injeção</td>
+                            <td>Usa <strong>Herança</strong>.</td>
+                            <td>Usa <strong>Composição</strong>.</td>
                         </tr>
                         <tr class="fragment">
-                            <td><strong>Complexidade</strong></td>
-                            <td>Menor</td>
-                            <td>Maior</td>
+                            <td><strong>Implementação</strong></td>
+                            <td>Subclasses sobrescrevem métodos.</td>
+                            <td>Fábricas concretas são <strong>Injetadas</strong>.</td>
                         </tr>
                     </tbody>
                 </table>
             </section>
 
             <section>
-                <h2>Exemplo Prático em PHP</h2>
-                <p class="fragment">Abaixo, a abstração da fábrica e sua implementação:</p>
-                
-                <div class="fragment">
-                    <pre><code class="language-php">
-// 1. Interface da Fábrica (Contrato)
+                <h3>Exemplo Prático (PHP)</h3>
+                <pre class="fragment"><code class="language-php">
+// Interface da Fábrica Abstrata
 interface UIFactory {
     public function createButton(): Button;
     public function createCheckbox(): Checkbox;
 }
 
-// 2. Implementação Concreta (Injetável)
-class WindowsUIFactory implements UIFactory {
-    public function createButton(): Button { return new WindowsButton(); }
-    public function createCheckbox(): Checkbox { return new WindowsCheckbox(); }
+// Fábrica Concreta (Ex: Tema Dark)
+class DarkUIFactory implements UIFactory {
+    public function createButton(): Button { return new DarkButton(); }
+    public function createCheckbox(): Checkbox { return new DarkCheckbox(); }
 }
 
-// 3. Cliente (Desacoplado via Injeção de Dependência)
-function renderUI(UIFactory $factory) {
-    $button = $factory->createButton();
-    $checkbox = $factory->createCheckbox();
-    echo $button->render();
+// Cliente: Recebe a fábrica via Injeção de Dependência
+function renderDashboard(UIFactory $factory) {
+    $btn = $factory->createButton();
+    return $btn->render();
 }
-                    </code></pre>
-                </div>
-                <p class="fragment"><small>O cliente não conhece as classes "Windows"; ele conhece apenas a Interface.</small></p>
+                </code></pre>
+                <p class="fragment"><small>Note: O cliente nunca faz "new DarkButton()", ele pede à fábrica.</small></p>
             </section>
 
             <section>
-                <h2>Vantagens e Desvantagens</h2>
+                <h2>Onde o padrão "brilha"?</h2>
+                <div class="highlight-box">
+                    <p class="fragment"><strong>Abstração de Banco de Dados:</strong> <br>
+                       <small>Frameworks (Laravel/Hibernate) trocam MySQL por PostgreSQL apenas mudando a fábrica injetada.</small></p>
+                    
+                    <p class="fragment"><strong>Temas e UI Toolkits:</strong> <br>
+                       <small>Garante que todos os componentes (botão, input, scroll) pertençam à mesma "família" visual.</small></p>
+                    
+                    <p class="fragment"><strong>Logging e Cache:</strong> <br>
+                       <small>Alternar entre salvar logs em Arquivo, Redis ou Sentry sem mexer na lógica de negócio.</small></p>
+                </div>
+                <p class="fragment" style="color: #42afff; font-size: 0.8em; margin-top: 10px;">
+                    "O software fica plugável: aberto para expansão, fechado para modificação."
+                </p>
+            </section>
+
+            <section>
+                <h2>Veredito</h2>
                 <div style="display: flex; justify-content: space-around; text-align: left;">
-                    <div style="width: 45%;">
-                        <h3 class="fragment">👍 Vantagens:</h3>
-                        <ul>
-                            <li class="fragment">Desacoplamento total</li>
-                            <li class="fragment">Consistência de família</li>
-                            <li class="fragment">Fácil troca de contexto</li>
+                    <div style="width: 48%;">
+                        <h4 style="color: #4caf50;">👍 Vantagens</h4>
+                        <ul style="font-size: 0.7em;">
+                            <li class="fragment">Isolamento de classes concretas.</li>
+                            <li class="fragment">Troca de famílias de produtos instantânea.</li>
+                            <li class="fragment">Promove o <strong>Single Responsibility Principle</strong>.</li>
                         </ul>
                     </div>
-                    <div style="width: 45%;">
-                        <h3 class="fragment">👎 Desvantagens:</h3>
-                        <ul>
-                            <li class="fragment"><strong>Overengineering</strong></li>
-                            <li class="fragment">Muitas interfaces novas</li>
-                            <li class="fragment">Complexo para projetos pequenos</li>
+                    <div style="width: 48%;">
+                        <h4 style="color: #f44336;">👎 Desvantagens</h4>
+                        <ul style="font-size: 0.7em;">
+                            <li class="fragment"><strong>Overengineering:</strong> Muita complexidade para apps simples.</li>
+                            <li class="fragment">Exige muitas interfaces e classes novas.</li>
+                            <li class="fragment">Dificuldade em adicionar novos tipos de produtos à família.</li>
                         </ul>
                     </div>
                 </div>
@@ -153,8 +162,7 @@ function renderUI(UIFactory $factory) {
             progress: true,
             center: true,
             hash: true,
-            // Ajuste de transição global entre slides
-            transition: 'slide', 
+            transition: 'convex', // Transição elegante
             plugins: [ RevealHighlight ]
         });
     </script>
