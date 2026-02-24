@@ -33,6 +33,25 @@
         .reveal pre code {
             max-height: 500px; /* Limita a altura do bloco de código */
         }
+        /* Permite scroll em slides que excedem a altura da tela */
+        .reveal .slides section {
+            height: 100%;
+            overflow-y: auto !important;
+            scrollbar-width: thin; /* Para Firefox */
+        }
+        
+        /* Opcional: Estilizar a barra de scroll para não ficar feia */
+        .reveal .slides section::-webkit-scrollbar {
+            width: 6px;
+        }
+        .reveal .slides section::-webkit-scrollbar-thumb {
+            background: #666;
+            border-radius: 10px;
+        }
+        .reveal pre code {
+            font-size: 0.5em; /* Diminui o texto do código */
+            line-height: 1.2em;
+        }
     </style>
 </head>
 <body>
