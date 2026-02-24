@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/monokai.min.css">
 
     <style>
-        /* Estilos personalizados se precisar */
         .reveal .slides section p {
             margin-bottom: 20px;
         }
@@ -30,17 +29,12 @@
             background-color: #333;
             color: white;
         }
-        .reveal pre code {
-            max-height: 500px; /* Limita a altura do bloco de código */
-        }
         /* Permite scroll em slides que excedem a altura da tela */
         .reveal .slides section {
-            height: 100%;
+            max-height: 90%; /* Ajuste para não colar na borda */
             overflow-y: auto !important;
-            scrollbar-width: thin; /* Para Firefox */
+            scrollbar-width: thin;
         }
-        
-        /* Opcional: Estilizar a barra de scroll para não ficar feia */
         .reveal .slides section::-webkit-scrollbar {
             width: 6px;
         }
@@ -49,8 +43,9 @@
             border-radius: 10px;
         }
         .reveal pre code {
-            font-size: 0.5em; /* Diminui o texto do código */
+            font-size: 0.55em;
             line-height: 1.2em;
+            max-height: 400px;
         }
     </style>
 </head>
@@ -59,16 +54,15 @@
         <div class="slides">
 
             <section>
-                <h1>Design Pattern: Abstract Factory</h1>
-                <h3>Criando famílias de objetos com elegância (e cautela)</h3>
-                <p>O que é? Um Padrão Criacional.</p>
-                <p>Objetivo: Independência entre criação e consumo de objetos.</p>
-                <p><small>Sua apresentação de TI</small></p>
+                <h1 class="fragment fade-up">Design Pattern: Abstract Factory</h1>
+                <h3 class="fragment">Criando famílias de objetos com elegância</h3>
+                <p class="fragment">O que é? Um Padrão Criacional.</p>
+                <p class="fragment">Objetivo: Independência entre criação e consumo.</p>
             </section>
 
             <section>
                 <h2>Abstract Factory vs. Factory Method</h2>
-                <p>Ambos são padrões criacionais, mas com propósitos e mecânicas diferentes:</p>
+                <p class="fragment">Diferenças fundamentais:</p>
                 <table>
                     <thead>
                         <tr>
@@ -78,20 +72,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr class="fragment">
                             <td><strong>Foco</strong></td>
-                            <td>Criação de <strong>um único produto</strong>.</td>
-                            <td>Criação de <strong>famílias de produtos</strong> relacionados.</td>
+                            <td>Um único produto</td>
+                            <td>Família de produtos</td>
                         </tr>
-                        <tr>
+                        <tr class="fragment">
                             <td><strong>Mecanismo</strong></td>
-                            <td><strong>Herança</strong> (subclasses decidem qual objeto instanciar).</td>
-                            <td><strong>Composição / Delegação</strong> (recebe uma fábrica que contém a lógica de criação).</td>
+                            <td>Herança</td>
+                            <td>Composição / Injeção</td>
                         </tr>
-                        <tr>
+                        <tr class="fragment">
                             <td><strong>Complexidade</strong></td>
-                            <td>Geralmente menor.</td>
-                            <td>Maior (mais interfaces e classes envolvidas).</td>
+                            <td>Menor</td>
+                            <td>Maior</td>
                         </tr>
                     </tbody>
                 </table>
@@ -99,60 +93,50 @@
 
             <section>
                 <h2>Exemplo Prático em PHP</h2>
-                <p>Vamos ver como o Abstract Factory organiza a criação de componentes:</p>
-                <p>A aplicação cliente não sabe se cria um UI para Windows ou Linux.</p>
-                <p>Ela apenas usa a fábrica injetada para garantir consistência!</p>
+                <p class="fragment">Abaixo, a abstração da fábrica e sua implementação:</p>
                 
-                <pre><code class="language-php">
-// Exemplo Simplificado: Interface da Fábrica Abstrata
+                <div class="fragment">
+                    <pre><code class="language-php">
+// 1. Interface da Fábrica (Contrato)
 interface UIFactory {
     public function createButton(): Button;
     public function createCheckbox(): Checkbox;
 }
 
-// Exemplo Simplificado: Fábrica Concreta para Windows
+// 2. Implementação Concreta (Injetável)
 class WindowsUIFactory implements UIFactory {
-    public function createButton(): Button {
-        return new WindowsButton();
-    }
-    public function createCheckbox(): Checkbox {
-        return new WindowsCheckbox();
-    }
+    public function createButton(): Button { return new WindowsButton(); }
+    public function createCheckbox(): Checkbox { return new WindowsCheckbox(); }
 }
 
-// Cliente usando a fábrica (injetada)
+// 3. Cliente (Desacoplado via Injeção de Dependência)
 function renderUI(UIFactory $factory) {
     $button = $factory->createButton();
     $checkbox = $factory->createCheckbox();
-    // ... usa os botões e checkboxes
-    echo $button->render() . "\n";
-    echo $checkbox->render() . "\n";
+    echo $button->render();
 }
-
-// Uso
-// $factory = new WindowsUIFactory(); // Ou new LinuxUIFactory();
-// renderUI($factory);
-                </code></pre>
-                <p><small>Isso garante que todos os componentes são da mesma "família" (Windows ou Linux).</small></p>
+                    </code></pre>
+                </div>
+                <p class="fragment"><small>O cliente não conhece as classes "Windows"; ele conhece apenas a Interface.</small></p>
             </section>
 
             <section>
                 <h2>Vantagens e Desvantagens</h2>
                 <div style="display: flex; justify-content: space-around; text-align: left;">
                     <div style="width: 45%;">
-                        <h3>👍 Vantagens:</h3>
+                        <h3 class="fragment">👍 Vantagens:</h3>
                         <ul>
-                            <li><strong>Desacoplamento:</strong> Cliente não depende de classes concretas.</li>
-                            <li><strong>Consistência:</strong> Garante que produtos de uma família são compatíveis.</li>
-                            <li><strong>Flexibilidade:</strong> Facilita a troca de famílias de produtos (ex: mudar de Windows para Linux UI).</li>
+                            <li class="fragment">Desacoplamento total</li>
+                            <li class="fragment">Consistência de família</li>
+                            <li class="fragment">Fácil troca de contexto</li>
                         </ul>
                     </div>
                     <div style="width: 45%;">
-                        <h3>👎 Desvantagens:</h3>
+                        <h3 class="fragment">👎 Desvantagens:</h3>
                         <ul>
-                            <li><strong>Aumento da Complexidade:</strong> Mais interfaces e classes em projetos pequenos.</li>
-                            <li>**Overengineering:** Pode ser "exagerado" para necessidades simples.</li>
-                            <li><strong>Dificuldade em Adicionar Novos Produtos:</strong> Requer modificação em todas as interfaces e fábricas existentes.</li>
+                            <li class="fragment"><strong>Overengineering</strong></li>
+                            <li class="fragment">Muitas interfaces novas</li>
+                            <li class="fragment">Complexo para projetos pequenos</li>
                         </ul>
                     </div>
                 </div>
@@ -169,7 +153,8 @@ function renderUI(UIFactory $factory) {
             progress: true,
             center: true,
             hash: true,
-
+            // Ajuste de transição global entre slides
+            transition: 'slide', 
             plugins: [ RevealHighlight ]
         });
     </script>
